@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,12 +27,18 @@
           <a href="#predict" class="nav-link-custom">Predict</a>
           <a href="/history" class="nav-link-custom">History</a>
           <a href="/about" class="nav-link-custom">About</a>
-          <a href="/project" class="nav-link-custom">Project</a>
           <a href="/contact" class="nav-link-custom">Contact</a>
 
-    <a href="/logout" class="nav-link-custom text-danger">
-        <i class="bi bi-box-arrow-right"></i> Logout
-    </a>
+          {% if logged_in %}
+            <span class="nav-link-custom text-secondary d-none d-lg-inline-block" style="pointer-events: none;">Hi, {{ username }}</span>
+            <a href="/logout" class="nav-link-custom text-danger">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          {% else %}
+            <a href="/login" class="nav-link-custom" style="color: #f59e0b !important;">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </a>
+          {% endif %}
         </div>
         </div>
       </div>
@@ -53,8 +59,8 @@
         </span>
 
         <h1 class="hero-title glow-text">
-          Engine Ka
-          <span class="gradient-text">Professional Health Check</span>
+          Professional
+          <span class="gradient-text">Engine Health Check</span>
         </h1>
 
         <p class="hero-subtitle text-secondary mt-4">
@@ -104,7 +110,7 @@
       <div class="section-header text-center mb-5">
         <span class="section-badge">📊 Analytics Dashboard</span>
         <h2 class="section-title">Real-Time System Overview</h2>
-        <p class="section-subtitle">Latest predictions aur engine health status</p>
+        <p class="section-subtitle">Latest predictions and engine health status</p>
       </div>
 
       <!-- Stats Grid -->
@@ -203,6 +209,7 @@
       </div>
       <div class="row align-items-center g-5">
 
+  {% if logged_in %}
   <!-- LEFT SIDE FORM -->
 
   <div class="col-lg-7">
@@ -315,6 +322,28 @@
 
 </div>
   </div>
+  {% else %}
+  <!-- LOCKED STATE -->
+  <div class="col-lg-7">
+    <div class="prediction-form-container fade-in-scroll" style="border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 20px; padding: 4.5rem 2rem; text-align: center; background: rgba(15, 23, 42, 0.2); backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div class="mb-4 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);">
+        <i class="bi bi-lock-fill" style="font-size: 2.2rem; color: #f59e0b;"></i>
+      </div>
+      <h3 class="fw-bold mb-3" style="color: #f59e0b; letter-spacing: -0.5px; font-size: 1.75rem;">Prediction Feature Locked</h3>
+      <p class="text-secondary mb-4" style="max-width: 440px; margin: 0 auto; font-size: 0.95rem; line-height: 1.6;">
+        Please sign in to check the engine's health. Access full AI analytics and prediction history reporting.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
+        <a href="/login" class="btn btn-lg d-flex align-items-center gap-2 fw-bold" style="background: #f59e0b; border: none; color: #0f172a; padding: 0.75rem 2rem; border-radius: 10px; transition: transform 0.2s, box-shadow 0.2s; font-size: 1rem;">
+          <i class="bi bi-box-arrow-in-right"></i> Sign In
+        </a>
+        <a href="/signup" class="btn btn-lg d-flex align-items-center gap-2 fw-bold" style="background: transparent; border: 2px solid #f59e0b; color: #f59e0b; padding: 0.75rem 2rem; border-radius: 10px; transition: transform 0.2s; font-size: 1rem;">
+          <i class="bi bi-person-plus"></i> Sign Up
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <!-- RIGHT SIDE IMAGE -->
 
   <div class="col-lg-5 text-center fade-up delay-2">
@@ -339,10 +368,10 @@
       </div>
       
       <div class="row g-5 align-items-center mb-5">
-        <div class="col-lg-6 fade-in-scroll">
+        <div class="col-lg-12 fade-in-scroll">
           <div class="about-content">
             <p class="about-text">
-              This system uses a Random Forest Machine Learning model trained on the AI4I 2020 Predictive Maintenance Dataset. It analyzes critical engine parameters and predicts potential failures before they occur, helping improve reliability, reduce downtime, and support proactive maintenance.
+              This system uses a Random Forest Machine Learning model trained on the Dataset. It analyzes critical engine parameters and predicts potential failures before they occur, helping improve reliability, reduce downtime, and support proactive maintenance.
             </p>
             <div class="features-list mt-4">
               <div class="feature-item">
@@ -364,21 +393,6 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-6 fade-in-scroll" style="--delay: 0.2s;">
-          <div class="tech-stack">
-            <h5 class="mb-4">🛠️ Technology Stack</h5>
-            <div class="tech-item">
-              <span class="tech-badge">Python</span>
-              <span class="tech-badge">Flask</span>
-              <span class="tech-badge">Scikit-Learn</span>
-            </div>
-            <div class="tech-item mt-3">
-              <span class="tech-badge">Bootstrap 5</span>
-              <span class="tech-badge">Bootstrap Icons</span>
-              <span class="tech-badge">HTML5/CSS3</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -392,21 +406,14 @@
       </div>
       
       <div class="row g-4 justify-content-center">
-        <div class="col-md-4 fade-in-scroll">
+        <div class="col-md-6 fade-in-scroll">
           <div class="contact-card">
             <i class="bi bi-envelope-fill"></i>
             <h5>Email</h5>
             <p><a href="mailto:support@infotact.com" class="contact-link">support@infotact.com</a></p>
           </div>
         </div>
-        <div class="col-md-4 fade-in-scroll" style="--delay: 0.1s;">
-          <div class="contact-card">
-            <i class="bi bi-telephone-fill"></i>
-            <h5>Phone</h5>
-            <p><a href="tel:+91-7357919798" class="contact-link">+91-7357919798</a></p>
-          </div>
-        </div>
-        <div class="col-md-4 fade-in-scroll" style="--delay: 0.2s;">
+        <div class="col-md-6 fade-in-scroll" style="--delay: 0.1s;">
           <div class="contact-card">
             <i class="bi bi-geo-alt-fill"></i>
             <h5>Location</h5>
@@ -424,11 +431,7 @@
         <div class="col-lg-4">
           <h6 class="footer-title">Infotact Predictive</h6>
           <p class="footer-text">Advanced engine maintenance predictions using AI</p>
-          <div class="social-links">
-            <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-twitter"></i></a>
-            <a href="#"><i class="bi bi-linkedin"></i></a>
-          </div>
+
         </div>
         <div class="col-lg-2">
           <h6 class="footer-title">Quick Links</h6>
@@ -443,9 +446,7 @@
           <h6 class="footer-title">Resources</h6>
           <ul class="footer-links">
             <li><a href="/about">About</a></li>
-            <li><a href="/project">Project</a></li>
             <li><a href="/contact">Contact</a></li>
-            <li><a href="/#">Privacy</a></li>
           </ul>
         </div>
         <div class="col-lg-4">
@@ -531,9 +532,6 @@
 <footer class="text-center py-4 text-secondary border-top border-secondary border-opacity-10">
   <div class="container">
     <p class="mb-2">&copy; 2026 Predictive Maintenance System</p>
-    <p class="small mb-0">
-      Built with <i class="bi bi-heart-fill text-danger"></i> for Infotact Internship
-    </p>
   </div>
 </footer>
 

@@ -21,3 +21,5 @@ env/
 
 # Windows
 Thumbs.db
+data/predictiveengine.db
+*.log

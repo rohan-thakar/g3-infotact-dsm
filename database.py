@@ -176,8 +176,8 @@ def get_user_by_email(email):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM users WHERE email=?",
-        (email,)
+        "SELECT * FROM users WHERE email=? OR fullname=?",
+        (email, email)
     )
 
     user = cursor.fetchone()

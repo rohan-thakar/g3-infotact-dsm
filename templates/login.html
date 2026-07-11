@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PredictX — AI Predictive Maintenance</title>
+  <title>Authentication - Infotact Predictive Engine</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -14,10 +17,10 @@
       --bg-card:      rgba(255,255,255,0.04);
       --bg-card-hover:rgba(255,255,255,0.07);
       --glass-border: rgba(255,255,255,0.09);
-      --glass-border-active: rgba(99,179,237,0.45);
-      --accent:       #63b3ed;
-      --accent-2:     #7f9cf5;
-      --accent-glow:  rgba(99,179,237,0.18);
+      --glass-border-active: rgba(245,158,11,0.45);
+      --accent:       #f59e0b;
+      --accent-2:     #fbbf24;
+      --accent-glow:  rgba(245,158,11,0.18);
       --success:      #48bb78;
       --danger:       #fc8181;
       --warning:      #f6ad55;
@@ -26,7 +29,7 @@
       --text-muted:   #4a5568;
       --input-bg:     rgba(255,255,255,0.05);
       --input-border: rgba(255,255,255,0.10);
-      --input-focus:  rgba(99,179,237,0.30);
+      --input-focus:  rgba(245,158,11,0.30);
     }
 
     html, body {
@@ -48,8 +51,8 @@
     .grid-overlay {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(245,158,11,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,158,11,0.02) 1px, transparent 1px);
       background-size: 60px 60px;
     }
 
@@ -57,189 +60,21 @@
     .page {
       position: relative; z-index: 1;
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 480px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 110px 1.5rem 4rem;
     }
 
-    /* ────── LEFT PANEL ────── */
-    .left-panel {
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start;
-      padding: 3rem 4rem 3rem 5rem;
-      position: relative;
-    }
-
-    .brand {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 3.5rem;
-    }
-
-    .brand-icon {
-      width: 42px; height: 42px; border-radius: 10px;
-      background: linear-gradient(135deg, #63b3ed, #7f9cf5);
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .brand-icon svg { width: 22px; height: 22px; }
-
-    .brand-name {
-      font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #e2e8f0, #63b3ed);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    .hero-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(99,179,237,0.10);
-      border: 1px solid rgba(99,179,237,0.20);
-      color: var(--accent);
-      font-size: 11px; font-weight: 600; letter-spacing: 1.2px;
-      text-transform: uppercase; padding: 5px 12px;
-      border-radius: 999px; margin-bottom: 1.5rem;
-    }
-
-    .hero-tag .dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent);
-      animation: pulse-dot 2s ease infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    .hero-headline {
-      font-size: 3rem; font-weight: 700; line-height: 1.15;
-      letter-spacing: -1.5px; margin-bottom: 1.25rem;
-    }
-
-    .hero-headline .gradient-word {
-      background: linear-gradient(135deg, #63b3ed 0%, #7f9cf5 60%, #b794f4 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    .hero-sub {
-      font-size: 16px; line-height: 1.7; color: var(--text-secondary);
-      max-width: 420px; margin-bottom: 2.5rem;
-    }
-
-    .stat-row {
-      display: flex; gap: 2rem; margin-bottom: 3rem;
-    }
-
-    .stat { display: flex; flex-direction: column; gap: 2px; }
-
-    .stat-val {
-      font-size: 24px; font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      background: linear-gradient(135deg, #e2e8f0, #63b3ed);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    .stat-label {
-      font-size: 11px; font-weight: 500;
-      color: var(--text-muted); letter-spacing: 0.5px;
-    }
-
-    /* Live machine monitor widget */
-    .monitor-card {
-      background: var(--bg-card);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px; padding: 1.25rem 1.5rem;
-      max-width: 420px; backdrop-filter: blur(10px);
-    }
-
-    .monitor-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    .monitor-title {
-      font-size: 12px; font-weight: 600; color: var(--text-secondary);
-      letter-spacing: 0.5px; text-transform: uppercase;
-    }
-
-    .live-badge {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 10px; font-weight: 600; color: var(--success);
-      letter-spacing: 0.8px; text-transform: uppercase;
-    }
-
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--success); animation: live-blink 1.5s ease infinite;
-    }
-
-    @keyframes live-blink {
-      0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
-    }
-
-    .sensor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .sensor-item {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px; padding: 10px 12px;
-    }
-
-    .sensor-name {
-      font-size: 10px; font-weight: 500; color: var(--text-muted);
-      letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;
-    }
-
-    .sensor-val {
-      font-size: 18px; font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .sensor-val.ok { color: var(--success); }
-    .sensor-val.warn { color: var(--warning); }
-    .sensor-val.crit { color: var(--danger); }
-
-    .prediction-bar {
-      margin-top: 1rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px; padding: 10px 14px;
-    }
-
-    .pred-label {
-      font-size: 11px; font-weight: 500; color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .bar-track {
-      height: 6px; background: rgba(255,255,255,0.06);
-      border-radius: 99px; overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%; border-radius: 99px;
-      background: linear-gradient(90deg, #48bb78, #68d391);
-      width: 0%;
-      transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .pred-status {
-      display: flex; justify-content: space-between;
-      margin-top: 6px;
-    }
-
-    .pred-text { font-size: 11px; color: var(--success); font-weight: 600; }
-    .pred-pct { font-size: 11px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
-
-    /* ────── RIGHT PANEL ────── */
+    /* ────── RIGHT PANEL / CENTERED CARD ────── */
     .right-panel {
       display: flex; align-items: center; justify-content: center;
-      padding: 2rem 2.5rem;
-      border-left: 1px solid rgba(255,255,255,0.04);
-      background: rgba(255,255,255,0.015);
+      width: 100%;
     }
 
     .auth-card {
-      width: 100%; max-width: 400px;
-      background: rgba(255,255,255,0.04);
+      width: 100%; max-width: 440px;
+      background: rgba(15, 23, 42, 0.4);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 24px; padding: 2.25rem;
       backdrop-filter: blur(20px);
@@ -264,7 +99,7 @@
     }
 
     .tab-btn.active {
-      background: rgba(99,179,237,0.15);
+      background: rgba(245,158,11,0.15);
       color: var(--accent);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
@@ -284,15 +119,16 @@
     }
 
     .form-title {
-      font-size: 20px; font-weight: 700; margin-bottom: 4px;
+      font-size: 24px; font-weight: 700; margin-bottom: 4px;
       letter-spacing: -0.4px;
+      color: #fff;
     }
 
     .form-subtitle {
       font-size: 13px; color: var(--text-secondary); margin-bottom: 1.75rem;
     }
 
-    .field { margin-bottom: 1rem; }
+    .field { margin-bottom: 1.25rem; }
 
     .field label {
       display: block; font-size: 12px; font-weight: 500;
@@ -305,6 +141,7 @@
     .input-wrap .input-icon {
       position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
       color: var(--text-muted); pointer-events: none;
+      font-size: 1.1rem;
     }
 
     .input-wrap input {
@@ -319,7 +156,7 @@
 
     .input-wrap input:focus {
       border-color: var(--accent);
-      background: rgba(99,179,237,0.06);
+      background: rgba(245,158,11,0.06);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
@@ -373,7 +210,7 @@
 
     .sbar.weak  { background: var(--danger); }
     .sbar.fair  { background: var(--warning); }
-    .sbar.good  { background: #63b3ed; }
+    .sbar.good  { background: var(--accent); }
     .sbar.strong{ background: var(--success); }
 
     .strength-label {
@@ -383,13 +220,14 @@
     /* Submit button */
     .submit-btn {
       width: 100%; padding: 12px;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
       border: none; border-radius: 11px;
-      color: #fff; font-size: 14px; font-weight: 600;
+      color: #0f172a; font-size: 14px; font-weight: 700;
       cursor: pointer; font-family: 'Inter', sans-serif;
-      letter-spacing: 0.2px; margin-top: 0.5rem;
+      letter-spacing: 0.5px; margin-top: 0.5rem;
       position: relative; overflow: hidden;
       transition: opacity 0.2s, transform 0.15s;
+      text-transform: uppercase;
     }
 
     .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
@@ -398,8 +236,8 @@
 
     .btn-spinner {
       display: none; width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff; border-radius: 50%;
+      border: 2px solid rgba(15,23,42,0.3);
+      border-top-color: #0f172a; border-radius: 50%;
       animation: spin 0.7s linear infinite;
       margin: 0 auto;
     }
@@ -408,39 +246,6 @@
 
     .submit-btn.loading .btn-text { display: none; }
     .submit-btn.loading .btn-spinner { display: block; }
-
-    /* Divider */
-    .divider {
-      display: flex; align-items: center; gap: 10px;
-      margin: 1.25rem 0; color: var(--text-muted); font-size: 12px;
-    }
-
-    .divider::before, .divider::after {
-      content: ''; flex: 1;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    /* OAuth buttons */
-    .oauth-row { display: flex; gap: 8px; }
-
-    .oauth-btn {
-      flex: 1; padding: 9px 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px; color: var(--text-secondary);
-      font-size: 13px; font-weight: 500; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      font-family: 'Inter', sans-serif;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-    }
-
-    .oauth-btn:hover {
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.14);
-      color: var(--text-primary);
-    }
-
-    .oauth-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* Switch link */
     .switch-link {
@@ -457,7 +262,7 @@
 
     /* Notification toast */
     .toast {
-      position: fixed; top: 24px; right: 24px;
+      position: fixed; top: 100px; right: 24px;
       background: rgba(30,41,59,0.95);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px; padding: 14px 18px;
@@ -468,6 +273,7 @@
       transform: translateY(-8px); opacity: 0;
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 999; max-width: 320px; pointer-events: none;
+      color: #fff;
     }
 
     .toast.show { transform: translateY(0); opacity: 1; }
@@ -475,591 +281,384 @@
     .toast.error   { border-color: rgba(252,129,129,0.3); }
 
     .toast-icon { font-size: 18px; flex-shrink: 0; }
-
-    /* Checkbox */
-    .checkbox-wrap {
-      display: flex; align-items: flex-start; gap: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .checkbox-wrap input[type="checkbox"] {
-      width: 16px; height: 16px; margin-top: 2px; cursor: pointer;
-      accent-color: var(--accent); flex-shrink: 0;
-    }
-
-    .checkbox-wrap label {
-      font-size: 12px; color: var(--text-secondary);
-      cursor: pointer; line-height: 1.5;
-    }
-
-    .checkbox-wrap label a { color: var(--accent); text-decoration: none; }
-
-    /* ────── RESPONSIVE ────── */
-    @media (max-width: 900px) {
-      .page { grid-template-columns: 1fr; }
-      .left-panel {
-        display: none; /* Hide on small screens */
-      }
-      .right-panel {
-        min-height: 100vh; border-left: none;
-        padding: 2rem 1.5rem;
-        background: transparent;
-      }
-      .auth-card {
-        box-shadow: 0 0 80px rgba(0,0,0,0.6);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .right-panel { padding: 1.5rem 1rem; }
-      .auth-card { padding: 1.75rem 1.5rem; border-radius: 20px; }
-    }
-
-    /* ── Floating label hint on input focus ── */
-    .input-wrap input:focus + .field-hint { opacity: 1; }
-
-    .field-hint {
-      font-size: 10px; color: var(--text-muted);
-      margin-top: 4px; opacity: 0; transition: opacity 0.2s;
-    }
   </style>
 </head>
 <body>
 
-<canvas id="particle-canvas"></canvas>
-<div class="grid-overlay"></div>
-
-<div class="page">
-
-  <!-- ────────────── LEFT PANEL ────────────── -->
-  <div class="left-panel">
-    <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-          <path d="M2 17l10 5 10-5"/>
-          <path d="M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <span class="brand-name">PredictX</span>
-    </div>
-
-    <span class="hero-tag">
-      <span class="dot"></span>
-      AI + IoT Platform
-    </span>
-
-    <h1 class="hero-headline">
-      Stop failures<br>before they<br>
-      <span class="gradient-word">happen.</span>
-    </h1>
-
-    <p class="hero-sub">
-      An AI-powered predictive maintenance system that analyses machine sensor data in real-time and alerts you before a breakdown occurs — saving time, cost, and downtime.
-    </p>
-
-    <div class="stat-row">
-      <div class="stat">
-        <span class="stat-val">85%+</span>
-        <span class="stat-label">Model F1 Score</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val">≤ 2s</span>
-        <span class="stat-label">Prediction Latency</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val">5 Types</span>
-        <span class="stat-label">Failure Modes Detected</span>
-      </div>
-    </div>
-
-    <!-- Mini live sensor card -->
-    <div class="monitor-card">
-      <div class="monitor-header">
-        <span class="monitor-title">Live Sensor Feed — Machine #A14</span>
-        <span class="live-badge"><span class="live-dot"></span>Live</span>
-      </div>
-      <div class="sensor-grid">
-        <div class="sensor-item">
-          <div class="sensor-name">Air Temp</div>
-          <div class="sensor-val ok" id="s-temp">298.3 K</div>
-        </div>
-        <div class="sensor-item">
-          <div class="sensor-name">Torque</div>
-          <div class="sensor-val warn" id="s-torque">47.2 Nm</div>
-        </div>
-        <div class="sensor-item">
-          <div class="sensor-name">Tool Wear</div>
-          <div class="sensor-val ok" id="s-wear">108 min</div>
-        </div>
-        <div class="sensor-item">
-          <div class="sensor-name">Rot. Speed</div>
-          <div class="sensor-val ok" id="s-speed">1523 rpm</div>
-        </div>
-      </div>
-      <div class="prediction-bar">
-        <div class="pred-label">ML Prediction Confidence — No Failure</div>
-        <div class="bar-track">
-          <div class="bar-fill" id="pred-bar"></div>
-        </div>
-        <div class="pred-status">
-          <span class="pred-text">✓ Machine Healthy</span>
-          <span class="pred-pct" id="pred-pct">0%</span>
+  <!-- GLOBAL NAVBAR -->
+  <nav class="navbar navbar-dark fixed-top navbar-custom">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold logo-brand" href="/">
+        <i class="bi bi-lightning-charge-fill"></i> 
+        <span>Infotact Predictive Engine</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <div class="nav-links d-flex gap-4">
+          <a href="/#home" class="nav-link-custom">Home</a>
+          <a href="/#dashboard" class="nav-link-custom">Dashboard</a>
+          <a href="/#predict" class="nav-link-custom">Predict</a>
+          <a href="/history" class="nav-link-custom">History</a>
+          <a href="/about" class="nav-link-custom">About</a>
+          <a href="/contact" class="nav-link-custom">Contact</a>
         </div>
       </div>
     </div>
+  </nav>
+
+  <canvas id="particle-canvas"></canvas>
+  <div class="grid-overlay"></div>
+
+  <div class="page">
+    <div class="right-panel">
+      <div class="auth-card">
+
+        <!-- Tab bar -->
+        <div class="tab-bar">
+          <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+          <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
+        </div>
+
+        <!-- ── LOGIN FORM ── -->
+        <div class="form-panel active" id="panel-login">
+          <!-- Circular Shield Icon -->
+          <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);">
+              <i class="bi bi-shield-lock-fill" style="font-size: 2.2rem; color: #f59e0b;"></i>
+            </div>
+          </div>
+          <div class="form-title text-center">Welcome Back</div>
+          <div class="form-subtitle text-center">Sign in to check engine health predictions</div>
+
+          <form id="login-form" action="/login" method="POST" novalidate>
+            <div class="field">
+              <label for="login-email">Username or Email</label>
+              <div class="input-wrap">
+                <i class="bi bi-person-fill input-icon"></i>
+                <input type="text" id="login-email" name="email" placeholder="Enter username or email address" autocomplete="username" />
+              </div>
+              <div class="field-error" id="login-email-err">Please enter username or email.</div>
+            </div>
+
+            <div class="field">
+              <div class="row-between" style="margin-bottom:6px">
+                <label for="login-pass" style="margin-bottom:0">Password</label>
+                <a href="#" onclick="showToast('Password reset coming soon!', 'info'); return false;" class="forgot-link">Forgot password?</a>
+              </div>
+              <div class="input-wrap">
+                <i class="bi bi-key-fill input-icon"></i>
+                <input type="password" id="login-pass" name="password" placeholder="Enter password" autocomplete="current-password" />
+                <button type="button" class="eye-btn" onclick="togglePass('login-pass', this)" aria-label="Toggle password visibility">
+                  <svg id="eye-login" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div class="field-error" id="login-pass-err">Password is required.</div>
+            </div>
+
+            <button type="submit" class="submit-btn mt-4" id="login-btn">
+              <span class="btn-text"><i class="bi bi-box-arrow-in-right me-1"></i> Sign In</span>
+              <div class="btn-spinner"></div>
+            </button>
+          </form>
+
+          <div class="switch-link">
+            Don't have an account? <a href="#" onclick="switchTab('register'); return false;">Sign Up Now</a>
+          </div>
+        </div>
+
+        <!-- ── REGISTER FORM ── -->
+        <div class="form-panel" id="panel-register">
+          <!-- Circular User-Plus Icon -->
+          <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);">
+              <i class="bi bi-person-plus-fill" style="font-size: 2.2rem; color: #f59e0b;"></i>
+            </div>
+          </div>
+          <div class="form-title text-center">Create Account</div>
+          <div class="form-subtitle text-center">Register to unlock AI predictive diagnostics</div>
+
+          <form id="register-form" action="/register" method="POST" novalidate>
+            <div class="field">
+              <label for="reg-name">Choose Username</label>
+              <div class="input-wrap">
+                <i class="bi bi-person-fill input-icon"></i>
+                <input type="text" id="reg-name" name="fullname" placeholder="Enter username" autocomplete="name" />
+              </div>
+              <div class="field-error" id="reg-name-err">Username must be at least 2 characters.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-email">Email Address</label>
+              <div class="input-wrap">
+                <i class="bi bi-envelope-fill input-icon"></i>
+                <input type="email" id="reg-email" name="email" placeholder="Enter email address" autocomplete="email" />
+              </div>
+              <div class="field-error" id="reg-email-err">Please enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+              <label for="reg-pass">Choose Password</label>
+              <div class="input-wrap">
+                <i class="bi bi-key-fill input-icon"></i>
+                <input type="password" id="reg-pass" name="password" placeholder="Enter password" autocomplete="new-password" oninput="checkStrength(this.value)" />
+                <button type="button" class="eye-btn" onclick="togglePass('reg-pass', this)" aria-label="Toggle password visibility">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div class="strength-wrap" id="strength-wrap" style="display:none">
+                <div class="strength-bars">
+                  <div class="sbar" id="sb1"></div>
+                  <div class="sbar" id="sb2"></div>
+                  <div class="sbar" id="sb3"></div>
+                  <div class="sbar" id="sb4"></div>
+                </div>
+                <div class="strength-label" id="strength-label">Weak</div>
+              </div>
+              <div class="field-error" id="reg-pass-err">Password must be at least 8 characters.</div>
+            </div>
+
+            <button type="submit" class="submit-btn mt-4" id="register-btn">
+              <span class="btn-text"><i class="bi bi-person-plus-fill me-1"></i> Create Account</span>
+              <div class="btn-spinner"></div>
+            </button>
+          </form>
+
+          <div class="switch-link">
+            Already have an account? <a href="#" onclick="switchTab('login'); return false;">Sign In</a>
+          </div>
+        </div>
+
+      </div><!-- /auth-card -->
+    </div><!-- /right-panel -->
+  </div><!-- /page -->
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toast-icon">✓</span>
+    <span id="toast-msg">Success</span>
   </div>
 
-  <!-- ────────────── RIGHT PANEL ────────────── -->
-  <div class="right-panel">
-    <div class="auth-card">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  /* ─── FLASK FLASH TOAST MESSAGES ─── */
+  window.addEventListener('load', () => {
+    {% if messages %}
+      {% for category, message in messages %}
+        showToast("{{ message }}", "{{ 'error' if category == 'error' or 'danger' in category else 'success' }}");
+      {% endfor %}
+    {% endif %}
 
-      <!-- Tab bar -->
-      <div class="tab-bar">
-        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-        <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
-      </div>
+    // Auto-active tab initialization from Flask
+    const activeTab = '{{ active_tab }}';
+    if (activeTab === 'register') {
+      switchTab('register');
+    } else {
+      switchTab('login');
+    }
+  });
 
-      <!-- ── LOGIN FORM ── -->
-      <div class="form-panel active" id="panel-login">
-        <div class="form-title">Welcome back</div>
-        <div class="form-subtitle">Sign in to your Predict Home</div>
+  /* ─── PARTICLE SYSTEM ─── */
+  (function() {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
 
-        <form id="login-form" action="/login" method="POST" novalidate>
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
 
-          <div class="field">
-            <label for="login-email">Email address</label>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-              <input type="email" id="login-email" name="email" placeholder="you@company.com" autocomplete="email" />
-            </div>
-            <div class="field-error" id="login-email-err">Please enter a valid email address.</div>
-          </div>
+    function Particle() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.r = Math.random() * 1.2 + 0.3;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.alpha = Math.random() * 0.4 + 0.1;
+    }
 
-          <div class="field">
-            <div class="row-between" style="margin-bottom:6px">
-              <label for="login-pass" style="margin-bottom:0">Password</label>
-              <a href="/forgot-password" class="forgot-link">Forgot password?</a>
-            </div>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <input type="password" id="login-pass" name="password" placeholder="Enter your password" autocomplete="current-password" />
-              <button type="button" class="eye-btn" onclick="togglePass('login-pass', this)" aria-label="Toggle password visibility">
-                <svg id="eye-login" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-            <div class="field-error" id="login-pass-err">Password is required.</div>
-          </div>
+    function init() {
+      particles = [];
+      const count = Math.floor((W * H) / 12000);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+    }
 
-          <button type="submit" class="submit-btn" id="login-btn">
-            <span class="btn-text">Sign In to Home</span>
-            <div class="btn-spinner"></div>
-          </button>
-        </form>
-<!-- 
-        <div class="divider">or continue with</div>
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = W;
+        if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H;
+        if (p.y > H) p.y = 0;
 
-        <div class="oauth-row">
-          <button class="oauth-btn" onclick="showToast('GitHub OAuth — coming soon!','info')">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-          </button>
-          <button class="oauth-btn" onclick="showToast('Google OAuth — coming soon!','info')">
-            <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Google
-          </button>
-        </div> -->
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245,158,11,${p.alpha})`;
+        ctx.fill();
 
-        <div class="switch-link">
-          Don't have an account? <a href="#" onclick="switchTab('register'); return false;">Create free</a>
-        </div>
-      </div>
-
-      <!-- ── REGISTER FORM ── -->
-      <div class="form-panel" id="panel-register">
-        <div class="form-title">Create account</div>
-        <div class="form-subtitle">Start monitoring machines in minutes</div>
-
-        <form id="register-form" action="/register" method="POST" novalidate>
-
-          <div class="field">
-            <label for="reg-name">Full Name</label>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              <input type="text" id="reg-name" name="fullname" placeholder="Rohit Sharma" autocomplete="name" />
-            </div>
-            <div class="field-error" id="reg-name-err">Name must be at least 2 characters.</div>
-          </div>
-
-          <div class="field">
-            <label for="reg-email">Email address</label>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-              <input type="email" id="reg-email" name="email" placeholder="you@company.com" autocomplete="email" />
-            </div>
-            <div class="field-error" id="reg-email-err">Please enter a valid email address.</div>
-          </div>
-
-          <div class="field">
-            <label for="reg-phone">Phone Number</label>
-              <div class="input-wrap">
-                <input
-                   type="tel"
-                    id="reg-phone"
-                    name="phone"
-                    placeholder="9876543210"
-                    maxlength="10"
-                    autocomplete="tel">
-                </div>
-
-                <div class="field-error" id="reg-phone-err">
-                  Enter a valid 10 digit phone number.
-            </div>
-          </div>
-            
-          <div class="field">
-            <label for="reg-address">Address</label>
-
-            <div class="input-wrap">
-              <input
-              type="text"
-              id="reg-address"
-              name="address"
-              placeholder="Jaipur, Rajasthan"
-              autocomplete="street-address">
-            </div>
-
-            <div class="field-error" id="reg-address-err">
-              Please enter your address.
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="reg-pass">Password</label>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <input type="password" id="reg-pass" name="password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)" />
-              <button type="button" class="eye-btn" onclick="togglePass('reg-pass', this)" aria-label="Toggle password visibility">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-            <div class="strength-wrap" id="strength-wrap" style="display:none">
-              <div class="strength-bars">
-                <div class="sbar" id="sb1"></div>
-                <div class="sbar" id="sb2"></div>
-                <div class="sbar" id="sb3"></div>
-                <div class="sbar" id="sb4"></div>
-              </div>
-              <div class="strength-label" id="strength-label">Weak</div>
-            </div>
-            <div class="field-error" id="reg-pass-err">Password must be at least 8 characters.</div>
-          </div>
-
-          <div class="field">
-            <label for="reg-confirm">Confirm Password</label>
-            <div class="input-wrap">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <input type="password" id="reg-confirm" name="confirm_password" placeholder="Re-enter password" autocomplete="new-password" />
-            </div>
-            <div class="field-error" id="reg-confirm-err">Passwords do not match.</div>
-          </div>
-
-          <div class="checkbox-wrap">
-            <input type="checkbox" id="reg-terms" name="agree_terms" />
-            <label for="reg-terms">
-              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-            </label>
-          </div>
-          <div class="field-error" id="reg-terms-err" style="margin-top:-8px; margin-bottom:10px">You must accept the terms to continue.</div>
-
-          <button type="submit" class="submit-btn" id="register-btn">
-            <span class="btn-text">Create Account</span>
-            <div class="btn-spinner"></div>
-          </button>
-        </form>
-
-        <div class="switch-link">
-          Already have an account? <a href="#" onclick="switchTab('login'); return false;">Sign in</a>
-        </div>
-      </div>
-
-    </div><!-- /auth-card -->
-  </div><!-- /right-panel -->
-
-</div><!-- /page -->
-
-<!-- Toast notification -->
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toast-icon">✓</span>
-  <span id="toast-msg">Success</span>
-</div>
-
-<script>
-/* ─── PARTICLE SYSTEM ─── */
-(function() {
-  const canvas = document.getElementById('particle-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [];
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-
-  function Particle() {
-    this.x = Math.random() * W;
-    this.y = Math.random() * H;
-    this.r = Math.random() * 1.2 + 0.3;
-    this.vx = (Math.random() - 0.5) * 0.3;
-    this.vy = (Math.random() - 0.5) * 0.3;
-    this.alpha = Math.random() * 0.4 + 0.1;
-  }
-
-  function init() {
-    particles = [];
-    const count = Math.floor((W * H) / 12000);
-    for (let i = 0; i < count; i++) particles.push(new Particle());
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W;
-      if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H;
-      if (p.y > H) p.y = 0;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(99,179,237,${p.alpha})`;
-      ctx.fill();
-
-      /* draw connection lines */
-      for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j];
-        const dx = p.x - q.x, dy = p.y - q.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(99,179,237,${0.06 * (1 - dist / 120)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+        /* draw connection lines */
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x, dy = p.y - q.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(245,158,11,${0.06 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
         }
       }
+      requestAnimationFrame(draw);
     }
-    requestAnimationFrame(draw);
+
+    window.addEventListener('resize', () => { resize(); init(); });
+    resize(); init(); draw();
+  })();
+
+  /* ─── TAB SWITCHER ─── */
+  function switchTab(tab) {
+    ['login', 'register'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+    });
   }
 
-  window.addEventListener('resize', () => { resize(); init(); });
-  resize(); init(); draw();
-})();
+  /* ─── PASSWORD VISIBILITY ─── */
+  function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.innerHTML = show
+      ? '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+      : '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  }
 
-/* ─── LIVE SENSOR SIMULATION ─── */
-function rnd(base, range) {
-  return (base + (Math.random() - 0.5) * range).toFixed(1);
-}
+  /* ─── PASSWORD STRENGTH ─── */
+  function checkStrength(val) {
+    const wrap = document.getElementById('strength-wrap');
+    if (!val) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
 
-function updateSensors() {
-  document.getElementById('s-temp').textContent = rnd(298, 3) + ' K';
-  document.getElementById('s-torque').textContent = rnd(47, 8) + ' Nm';
-  document.getElementById('s-wear').textContent = Math.round(108 + (Math.random() - 0.5) * 4) + ' min';
-  document.getElementById('s-speed').textContent = Math.round(1520 + (Math.random() - 0.5) * 40) + ' rpm';
-}
+    const tests = [
+      val.length >= 8,
+      /[A-Z]/.test(val),
+      /[0-9]/.test(val),
+      /[^A-Za-z0-9]/.test(val)
+    ];
+    const score = tests.filter(Boolean).length;
 
-/* Bar animation on load */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const pct = Math.round(88 + Math.random() * 7);
-    document.getElementById('pred-bar').style.width = pct + '%';
-    document.getElementById('pred-pct').textContent = pct + '%';
-  }, 600);
-  setInterval(updateSensors, 2000);
-});
+    const classes = ['', 'weak', 'fair', 'good', 'strong'];
+    const labels  = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    const colors  = ['', 'var(--danger)', 'var(--warning)', 'var(--accent)', 'var(--success)'];
 
-/* ─── TAB SWITCHER ─── */
-function switchTab(tab) {
-  ['login', 'register'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+    for (let i = 1; i <= 4; i++) {
+      const bar = document.getElementById('sb' + i);
+      bar.className = 'sbar' + (i <= score ? ' ' + classes[score] : '');
+    }
+    const lbl = document.getElementById('strength-label');
+    lbl.textContent = labels[score];
+    lbl.style.color = colors[score];
+  }
+
+  /* ─── FORM VALIDATION ─── */
+  function showErr(id, show) {
+    const el = document.getElementById(id);
+    el.classList.toggle('show', show);
+  }
+
+  function setInputState(id, state) {
+    const el = document.getElementById(id);
+    el.classList.remove('error', 'success');
+    if (state) el.classList.add(state);
+  }
+
+  function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  /* Login form validation */
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    let valid = true;
+
+    if (!email) {
+      setInputState('login-email', 'error');
+      showErr('login-email-err', true);
+      valid = false;
+    } else {
+      setInputState('login-email', 'success');
+      showErr('login-email-err', false);
+    }
+
+    if (!pass) {
+      setInputState('login-pass', 'error');
+      showErr('login-pass-err', true);
+      valid = false;
+    } else {
+      setInputState('login-pass', 'success');
+      showErr('login-pass-err', false);
+    }
+
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
+
+    const btn = document.getElementById("login-btn");
+    btn.classList.add("loading");
+    btn.disabled = true;
   });
-}
 
-/* ─── PASSWORD VISIBILITY ─── */
-function togglePass(id, btn) {
-  const input = document.getElementById(id);
-  const show = input.type === 'password';
-  input.type = show ? 'text' : 'password';
-  btn.innerHTML = show
-    ? '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
-    : '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-}
+  /* Register form validation */
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    const name    = document.getElementById('reg-name').value.trim();
+    const email   = document.getElementById('reg-email').value.trim();
+    const pass    = document.getElementById('reg-pass').value;
+    let valid = true;
 
-/* ─── PASSWORD STRENGTH ─── */
-function checkStrength(val) {
-  const wrap = document.getElementById('strength-wrap');
-  if (!val) { wrap.style.display = 'none'; return; }
-  wrap.style.display = 'block';
+    if (name.length < 2) {
+      setInputState('reg-name', 'error'); showErr('reg-name-err', true); valid = false;
+    } else {
+      setInputState('reg-name', 'success'); showErr('reg-name-err', false);
+    }
 
-  const tests = [
-    val.length >= 8,
-    /[A-Z]/.test(val),
-    /[0-9]/.test(val),
-    /[^A-Za-z0-9]/.test(val)
-  ];
-  const score = tests.filter(Boolean).length;
+    if (!isEmail(email)) {
+      setInputState('reg-email', 'error'); showErr('reg-email-err', true); valid = false;
+    } else {
+      setInputState('reg-email', 'success'); showErr('reg-email-err', false);
+    }
 
-  const classes = ['', 'weak', 'fair', 'good', 'strong'];
-  const labels  = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-  const colors  = ['', 'var(--danger)', 'var(--warning)', '#63b3ed', 'var(--success)'];
+    if (pass.length < 8) {
+      setInputState('reg-pass', 'error'); showErr('reg-pass-err', true); valid = false;
+    } else {
+      setInputState('reg-pass', 'success'); showErr('reg-pass-err', false);
+    }
 
-  for (let i = 1; i <= 4; i++) {
-    const bar = document.getElementById('sb' + i);
-    bar.className = 'sbar' + (i <= score ? ' ' + classes[score] : '');
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
+
+    const btn = document.getElementById("register-btn");
+    btn.classList.add("loading");
+    btn.disabled = true;
+  });
+
+  /* ─── TOAST ─── */
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    t.className = 'toast ' + (type || 'info');
+    document.getElementById('toast-icon').textContent = icons[type] || 'ℹ';
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
   }
-  const lbl = document.getElementById('strength-label');
-  lbl.textContent = labels[score];
-  lbl.style.color = colors[score];
-}
-
-/* ─── FORM VALIDATION ─── */
-function showErr(id, show) {
-  const el = document.getElementById(id);
-  el.classList.toggle('show', show);
-}
-
-function setInputState(id, state) {
-  const el = document.getElementById(id);
-  el.classList.remove('error', 'success');
-  if (state) el.classList.add(state);
-}
-
-function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-/* Login form */
-document.getElementById('login-form').addEventListener('submit', function(e) {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  let valid = true;
-
-  if (!isEmail(email)) {
-    setInputState('login-email', 'error');
-    showErr('login-email-err', true);
-    valid = false;
-  } else {
-    setInputState('login-email', 'success');
-    showErr('login-email-err', false);
-  }
-
-  if (!pass) {
-    setInputState('login-pass', 'error');
-    showErr('login-pass-err', true);
-    valid = false;
-  } else {
-    setInputState('login-pass', 'success');
-    showErr('login-pass-err', false);
-  }
-
-  if(!valid){
-
-  e.preventDefault();
-
-  return;
-
-  }
-
-  const btn = document.getElementById("login-btn");
-
-btn.classList.add("loading");
-
-btn.disabled = true;
-
-});
-
-/* Register form */
-document.getElementById('register-form').addEventListener('submit', function(e) {
-
-  const name    = document.getElementById('reg-name').value.trim();
-  const email   = document.getElementById('reg-email').value.trim();
-  const pass    = document.getElementById('reg-pass').value;
-  const confirm = document.getElementById('reg-confirm').value;
-  const terms   = document.getElementById('reg-terms').checked;
-  let valid = true;
-
-  if (name.length < 2) {
-    setInputState('reg-name', 'error'); showErr('reg-name-err', true); valid = false;
-  } else {
-    setInputState('reg-name', 'success'); showErr('reg-name-err', false);
-  }
-
-  if (!isEmail(email)) {
-    setInputState('reg-email', 'error'); showErr('reg-email-err', true); valid = false;
-  } else {
-    setInputState('reg-email', 'success'); showErr('reg-email-err', false);
-  }
-
-  if (pass.length < 8) {
-    setInputState('reg-pass', 'error'); showErr('reg-pass-err', true); valid = false;
-  } else {
-    setInputState('reg-pass', 'success'); showErr('reg-pass-err', false);
-  }
-
-  if (pass !== confirm) {
-    setInputState('reg-confirm', 'error'); showErr('reg-confirm-err', true); valid = false;
-  } else {
-    setInputState('reg-confirm', 'success'); showErr('reg-confirm-err', false);
-  }
-
-  if (!terms) {
-    showErr('reg-terms-err', true); valid = false;
-  } else {
-    showErr('reg-terms-err', false);
-  }
-
-  if (!valid){
-  e.preventDefault();
-
-  return;
-  }
-
-const btn=document.getElementById("register-btn");
-
-btn.classList.add("loading");
-
-btn.disabled=true;
-
-});
-
-/* ─── TOAST ─── */
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  t.className = 'toast ' + (type || 'info');
-  document.getElementById('toast-icon').textContent = icons[type] || 'ℹ';
-  document.getElementById('toast-msg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-</script>
+  </script>
 </body>
 </html>
