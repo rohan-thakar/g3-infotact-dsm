@@ -1,5 +1,11 @@
 import os
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+from dotenv import load_dotenv
+load_dotenv()
  
 import joblib
 import pandas as pd
@@ -23,17 +29,23 @@ from database import (
     get_stats,
     register_user,
     get_user_by_email,
-    login_user
+    login_user,
+    update_user_password
 )
  
-app = Flask(__name__)
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE, "..", "frontend", "templates"),
+    static_folder=os.path.join(BASE, "..", "frontend", "static")
+)
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "predictive-maintenance-secret"
 )
 app.config["SESSION_PERMANENT"] = False
- 
-BASE = os.path.dirname(os.path.abspath(__file__))
+
 MODEL = joblib.load(
     os.path.join(BASE, "predictive_maintenance_model.pkl")
 )
@@ -125,8 +137,14 @@ def login_page():
         return redirect("/")
  
     messages = get_flashed_messages(with_categories=True)
+    step = request.args.get("step", "login")
  
-    return render_template("login.html", messages=messages, active_tab="login")
+    return render_template(
+        "login.html",
+        messages=messages,
+        active_tab="login",
+        step=step
+    )
 
 
 # ==========================
@@ -140,8 +158,14 @@ def signup_page():
         return redirect("/")
 
     messages = get_flashed_messages(with_categories=True)
+    step = request.args.get("step", "register")
 
-    return render_template("login.html", messages=messages, active_tab="register")
+    return render_template(
+        "login.html",
+        messages=messages,
+        active_tab="register",
+        step=step
+    )
 
 
 # ==========================
@@ -237,6 +261,100 @@ def logout():
 
     return redirect("/login")
 
+
+# ==========================
+# Forgot & Reset Password
+# ==========================
+
+def send_recovery_email(recipient_email, code):
+    sender_email = os.environ.get("SENDER_EMAIL")
+    sender_password = os.environ.get("SENDER_PASSWORD")
+    
+    if not sender_email or not sender_password:
+        print("SMTP Credentials not configured in environment variables.")
+        return False
+        
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = "Predictive Engine - Password Recovery Code"
+        
+        body = f"""Hi,
+
+You requested a password reset for your Predictive Engine account.
+
+Your verification code is: {code}
+
+If you did not request this, please ignore this email.
+
+Best regards,
+Predictive Engine Team"""
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Using Gmail SMTP Server
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print("SMTP Error occurred during password recovery:", e)
+        return False
+
+@app.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    email = request.form.get("email")
+    user = get_user_by_email(email)
+    
+    if user:
+        import random
+        code = str(random.randint(100000, 999999))
+        session["reset_code"] = code
+        session["reset_email"] = email
+        
+        email_sent = send_recovery_email(email, code)
+        if email_sent:
+            flash("Verification code has been sent to your email address.", "success")
+        else:
+            flash(f"Failed to send email. Verification code displayed for development: {code}", "warning")
+            
+        return redirect(url_for("login_page", step="verify"))
+    else:
+        flash("Email address not found.", "danger")
+        return redirect(url_for("login_page", step="forgot"))
+
+
+@app.route("/reset-password", methods=["POST"])
+def reset_password():
+    code = request.form.get("code")
+    password = request.form.get("password")
+    confirm = request.form.get("confirm_password", password)
+    
+    if "reset_code" not in session or "reset_email" not in session:
+        flash("Session expired. Please try again.", "danger")
+        return redirect(url_for("login_page"))
+        
+    if code != session["reset_code"]:
+        flash("Invalid verification code.", "danger")
+        return redirect(url_for("login_page", step="verify"))
+        
+    if password != confirm:
+        flash("Passwords do not match.", "danger")
+        return redirect(url_for("login_page", step="verify"))
+        
+    email = session["reset_email"]
+    if update_user_password(email, password):
+        session.pop("reset_code", None)
+        session.pop("reset_email", None)
+        flash("Password reset successful. Please sign in.", "success")
+        return redirect(url_for("login_page"))
+    else:
+        flash("Failed to update password. Please try again.", "danger")
+        return redirect(url_for("login_page"))
+
 @app.route("/users")
 def users():
 
@@ -262,7 +380,7 @@ def home():
     print("SESSION:", dict(session))
 
     logged_in = "user_id" in session
-    stats = get_stats()
+    stats = get_stats(session.get("user_id"))
 
     return render_template(
         "index.html",
@@ -289,7 +407,8 @@ def predict():
  
         save_prediction(
             request.form,
-            result
+            result,
+            session["user_id"]
         )
  
         return render_template(
@@ -310,11 +429,12 @@ def predict():
 @app.route("/history")
 def history():
 
-    # if "user_id" not in session:
-    #     return redirect("/login")
+    if "user_id" not in session:
+        flash("Please sign in to view history.")
+        return redirect(url_for("login_page"))
 
-    records = get_predictions()
-    stats = get_stats()
+    records = get_predictions(session["user_id"])
+    stats = get_stats(session["user_id"])
 
     return render_template(
         "history.html",
